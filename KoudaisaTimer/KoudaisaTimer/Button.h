@@ -39,9 +39,20 @@ public:
 		getColider().draw();
 		FontAsset(L"Button")(m_name).drawAt(getColider().center,Palette::Black);
 
-		if (mouseOver())
+		if (leftClicked())
 		{
-			getColider().draw(Color(Palette::Gray, 200));
+			drawPushed();
 		}
+
+		else if (mouseOver())
+		{
+			getColider().draw(Color(Palette::Gray, 100));
+		}
+
+	}
+
+	void drawPushed()const
+	{
+		getColider().draw(Color(Palette::Gray, 230));
 	}
 };

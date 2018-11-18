@@ -55,6 +55,11 @@ public:
 		return m_timer.s() > DEADLINE_S;
 	}
 
+private:
+
+	bool isCalledStartBt = false;
+	bool isCalledResetBt = false;
+
 	void startBtFunc()
 	{
 		if (m_timer.isPaused() || !m_timer.isActive())
@@ -77,8 +82,25 @@ public:
 		m_startBt.setName(L"スタート");
 	}
 
+public:
+
+	void callStartBt()
+	{
+		startBtFunc();
+		isCalledStartBt = true;
+	}
+
+	void callResetBt()
+	{
+		resetBtFunc();
+		isCalledResetBt = true;
+	}
+
 	void update()
 	{
+		isCalledStartBt = false;
+		isCalledResetBt = false;
+
 		if (m_startBt.leftClicked())
 		{
 			startBtFunc();
@@ -106,10 +128,18 @@ public:
 		FontAsset(L"Timer")(getTime()).drawAt(timeRect.center);
 
 
-		
-
 		m_startBt.draw();
 		m_resetBt.draw();
+
+		if (isCalledStartBt)
+		{
+			m_startBt.drawPushed();
+		}
+
+		if (isCalledResetBt)
+		{
+			m_resetBt.drawPushed();
+		}
 	}
 
 };
