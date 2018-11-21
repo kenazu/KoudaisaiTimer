@@ -11,6 +11,8 @@ void Main()
 	FontAsset::Register(L"Button",10);
 	FontAsset::Register(L"Timer", 20);		
 	FontAsset::Register(L"TimerName", 20);
+	FontAsset::Register(L"Clock", 20);
+	FontAsset::Register(L"ClockName", 20);
 
 
 	MyApp manager;

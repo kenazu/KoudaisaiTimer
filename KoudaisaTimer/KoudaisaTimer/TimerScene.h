@@ -1,10 +1,12 @@
 #pragma once
 # include "SceneBase.h"
 # include "Timer.h"
+# include "Clock.h"
 
 class TimerScene :public MyApp::Scene
 {
 	Array<Timer> m_timers;
+	Clock m_clock;
 
 	int m_timerIdx = -1;
 
@@ -61,6 +63,8 @@ public:
 		m_timers.push_back(Timer(Point(320, 270), Size(320, 270), L"PC2"));
 		m_timers.push_back(Timer(Point(640, 270), Size(320, 270), L"VR"));
 		*/
+
+		m_clock = Clock(Point(640, 0), Size(320, 270), L"ŽžŒv");
 	}
 
 	void updateIdx()
@@ -124,6 +128,8 @@ public:
 		{
 			t.draw();
 		}
+
+		m_clock.draw();
 
 		if (!InRange(m_timerIdx, 0, 4))
 		{

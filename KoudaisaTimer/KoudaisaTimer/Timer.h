@@ -7,13 +7,14 @@ class Timer
 	Stopwatch m_timer;
 	Button m_startBt;
 	Button m_resetBt;
+	static const int DEADLINE_S = 10 * 60;
 
+
+protected:
 	Point m_pos;
 	Size m_size;
 
 	String m_name;
-
-	static const int DEADLINE_S = 10 * 60;
 
 public:
 
@@ -124,7 +125,7 @@ public:
 		const Rect nameRect = Rect(m_pos, m_size.x, 50).drawFrame(1, 0, Palette::White);
 		FontAsset(L"TimerName")(m_name).drawAt(nameRect.center);
 
-		const Rect timeRect = Rect(150, 70).setCenter(getCenter()).drawFrame(1, 0, Palette::White);
+		const Rect timeRect = Rect(150, 70).setCenter(getCenter()).drawFrame(1, 0, (!m_timer.isPaused() && m_timer.isActive()) ? Palette::Red : Palette::White);
 		FontAsset(L"Timer")(getTime()).drawAt(timeRect.center);
 
 

@@ -278,6 +278,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerScene.h" />
