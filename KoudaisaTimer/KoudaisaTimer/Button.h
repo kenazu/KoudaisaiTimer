@@ -7,15 +7,22 @@ class Button
 	Size m_size;
 	String m_name;
 
+	bool m_isEnabled;
+
 public:
 
-	Button(){ }
-	Button(const Point& _pos,const Size& _size) :m_pos(_pos),m_size(_size){}
-	Button(const Rect& _rect,const String& _name) :m_pos(_rect.pos), m_size(_rect.size),m_name(_name) {}
+	Button():m_isEnabled(true){ }
+	Button(const Point& _pos,const Size& _size) :m_pos(_pos),m_size(_size), m_isEnabled(true) {}
+	Button(const Rect& _rect,const String& _name) :m_pos(_rect.pos), m_size(_rect.size),m_name(_name) , m_isEnabled(true) {}
 
 	void setName(const String& _name)
 	{
 		m_name = _name;
+	}
+
+	void setEnabled(bool _enabled)
+	{
+		m_isEnabled = _enabled;
 	}
 
 	Rect getColider()const
@@ -25,12 +32,17 @@ public:
 
 	bool mouseOver()const
 	{
-		return getColider().mouseOver && !getColider().leftClicked;
+		return getColider().mouseOver && !getColider().leftClicked && m_isEnabled;
 	}
 
 	bool leftClicked()const
 	{
-		return getColider().leftClicked;
+		return getColider().leftClicked&& m_isEnabled;
+	}
+
+	bool isEnabled()const
+	{
+		return m_isEnabled;
 	}
 
 
@@ -38,6 +50,12 @@ public:
 	{
 		getColider().draw();
 		FontAsset(L"Button")(m_name).drawAt(getColider().center,Palette::Black);
+
+		if (!m_isEnabled)
+		{
+			getColider().draw(Color(Palette::Black,200));
+			return;
+		}
 
 		if (leftClicked())
 		{

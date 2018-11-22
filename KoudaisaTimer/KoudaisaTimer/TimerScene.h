@@ -8,7 +8,7 @@ class TimerScene :public MyApp::Scene
 	Array<Timer> m_timers;
 	Clock m_clock;
 
-	int m_timerIdx = -1;
+	int m_timerIdx = 0;
 
 
 public:
@@ -65,6 +65,7 @@ public:
 		*/
 
 		m_clock = Clock(Point(640, 0), Size(320, 270), L"ŽžŒv");
+
 	}
 
 	void updateIdx()

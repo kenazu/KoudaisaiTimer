@@ -63,10 +63,16 @@ private:
 
 	void startBtFunc()
 	{
+		if (!m_startBt.isEnabled())
+		{
+			return;
+		}
+
 		if (m_timer.isPaused() || !m_timer.isActive())
 		{
 			start();
 			m_startBt.setName(L"ポーズ");
+			m_resetBt.setEnabled(false);
 
 		}
 
@@ -74,11 +80,18 @@ private:
 		{
 			pause();
 			m_startBt.setName(L"スタート");
+			m_resetBt.setEnabled(true);
+
 		}
 	}
 
 	void resetBtFunc()
 	{
+		if (!m_resetBt.isEnabled())
+		{
+			return;
+		}
+
 		reset();
 		m_startBt.setName(L"スタート");
 	}
@@ -129,15 +142,18 @@ public:
 		FontAsset(L"Timer")(getTime()).drawAt(timeRect.center);
 
 
+		FontAsset(L"TimerText")(L"Space").drawAt(m_startBt.getColider().center.movedBy(0, 30));
+		FontAsset(L"TimerText")(L"Shift").drawAt(m_resetBt.getColider().center.movedBy(0, 30));
+
 		m_startBt.draw();
 		m_resetBt.draw();
 
-		if (isCalledStartBt)
+		if (isCalledStartBt && m_startBt.isEnabled())
 		{
 			m_startBt.drawPushed();
 		}
 
-		if (isCalledResetBt)
+		if (isCalledResetBt && m_resetBt.isEnabled())
 		{
 			m_resetBt.drawPushed();
 		}

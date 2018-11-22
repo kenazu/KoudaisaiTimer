@@ -4,13 +4,14 @@
 
 void Main()
 {
-	Window::SetTitle(L"NITMic工大祭タイマー");
+	Window::SetTitle(L"NITMic工大祭タイマー    Tabキーで移動");
 
 	Window::Resize(960,540);
 
 	FontAsset::Register(L"Button",10);
 	FontAsset::Register(L"Timer", 20);		
 	FontAsset::Register(L"TimerName", 20);
+	FontAsset::Register(L"TimerText", 10);
 	FontAsset::Register(L"Clock", 20);
 	FontAsset::Register(L"ClockName", 20);
 
