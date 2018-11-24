@@ -1,29 +1,38 @@
 #pragma once
 # include <Siv3D.hpp>
 # include "Button.h"
+# include "DrawArea.h"
 
-class Timer
+class Timer :public DrawArea
 {
 	Stopwatch m_timer;
 	Button m_startBt;
 	Button m_resetBt;
 	static const int DEADLINE_S = 10 * 60;
 
-
-protected:
-	Point m_pos;
-	Size m_size;
-
-	String m_name;
-
+	int m_initMin;
+	int m_initSec;
 public:
 
 	Timer() {}
-	Timer(const Point& _pos,const Size& _size,const String& _name):m_pos(_pos),m_size(_size),m_name(_name)
+
+	Timer(const Point& _pos, const Size& _size, const String& _name,int _initMin=0,int _initSec = 0) :
+		DrawArea(_pos, _size, _name),m_initMin(_initMin),m_initSec(_initSec)
 	{
 		m_startBt = Button(Rect(100, 30).setCenter(m_size.x / 4, 220).movedBy(_pos), L"スタート");
 		m_resetBt = Button(Rect(100, 30).setCenter(m_size.x / 4 * 3, 220).movedBy(_pos), L"リセット");
 	}
+
+	void setInitMin(int _initMin)
+	{
+		m_initMin = _initMin;
+	}
+
+	void setInitSec(int _initSec)
+	{
+		m_initSec = _initSec;
+	}
+
 
 	void start() { m_timer.start(); }
 
@@ -33,27 +42,19 @@ public:
 
 	void reset() { m_timer.reset(); }
 
-	Rect getColider()const
-	{
-		return Rect(m_pos, m_size);
-	}
-
-	Point getCenter()const
-	{
-		return getColider().center;
-	}
-
 	String getTime()const
 	{
-		const String min = Pad(m_timer.min() % 60, { 2,L'0' });
-		const String sec = Pad(m_timer.s() % 60, { 2,L'0' });
+		const int sec = m_timer.s() + m_initSec + m_initMin * 60;
 
-		return Format(min, L":", sec);
+		const String minStr = Pad(sec / 60, { 2,L'0' });
+		const String secStr = Pad(sec % 60, { 2,L'0' });
+
+		return Format(minStr, L":", secStr);
 	}
 
 	bool isTimeOver()const
 	{
-		return m_timer.s() > DEADLINE_S;
+		return m_timer.s() + m_initSec + m_initMin * 60 > DEADLINE_S;
 	}
 
 private:
@@ -94,6 +95,10 @@ private:
 
 		reset();
 		m_startBt.setName(L"スタート");
+		m_initMin = 0;
+		m_initSec = 0;
+
+
 	}
 
 public:
@@ -110,7 +115,7 @@ public:
 		isCalledResetBt = true;
 	}
 
-	void update()
+	void update()override
 	{
 		isCalledStartBt = false;
 		isCalledResetBt = false;
@@ -126,7 +131,7 @@ public:
 		}
 	}
 
-	void draw()const
+	void draw()const override
 	{
 		if (isTimeOver())
 		{

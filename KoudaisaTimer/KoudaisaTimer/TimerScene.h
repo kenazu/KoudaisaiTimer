@@ -5,7 +5,8 @@
 
 class TimerScene :public MyApp::Scene
 {
-	Array<Timer> m_timers;
+	//Array<std::shared_ptr<DrawArea>> m_timers;
+	Array<std::shared_ptr<Timer>> m_timers;
 	Clock m_clock;
 
 	int m_timerIdx = 0;
@@ -22,47 +23,77 @@ public:
 
 		while (reader.readLine(line))
 		{
-			const auto datas = line.split(L':');
+			const auto datas = line.split(L',');
 
-			if (datas.size() != 2)
+			if (datas.size() < 2 || datas.size() > 3)
 			{
 				Println(L"loadError -> sizeError:",line);
 				continue;
 			}
 
-			const auto noData = ParseOpt<int>(datas[0]);
+			const auto numberData = ParseOpt<int>(datas[0]);
+			const auto name = datas[1];
 
-			if (!noData.has_value())
+			
+
+
+			const int idx = numberData.value() - 1;
+
+			if (!InRange(idx, 0, SIZE.x*SIZE.y - 1))
 			{
-				Println(L"loadError -> noDataError:", noData);
+				Println(L"loadError -> idxError:", idx);
 				continue;
 			}
 
-			const int no = noData.value() - 1;
+			const Point pos = Point(320 * (idx%SIZE.x), 270 * (idx / SIZE.x));
 
-			if (!InRange(no, 0, SIZE.x*SIZE.y - 1))
+			Timer timer = Timer(pos, Size(320, 270), name);
+
+			if (datas.size() == 3)
 			{
-				Println(L"loadError -> noError:", no);
-				continue;
+				const auto timeData = datas[2].split(L':');
+
+				if (timeData.size() != 2)
+				{
+					Println(L"loadError -> timeDataSizeError:", timeData);
+					continue;
+				}
+
+				const auto initMin = ParseOpt<int>(timeData[0]);
+				const auto initSec = ParseOpt<int>(timeData[1]);
+
+				if (!initMin.has_value())
+				{
+					Println(L"loadError -> initMinError:", timeData[0],L"->",initMin);
+					continue;
+				}
+
+				if (!initSec.has_value())
+				{
+					Println(L"loadError -> initSecError:", timeData[1], L"->", initSec);
+					continue;
+				}
+
+				timer.setInitMin(initMin.value());
+				timer.setInitSec(initSec.value());
 			}
 
-			const Point pos = Point(320 * (no%SIZE.x), 270 * (no / SIZE.x));
+			m_timers.push_back(std::make_shared<Timer>(timer));
 
-			m_timers.push_back(Timer(pos, Size(320, 270), datas[1]));
 		}
 	}
 
+
 	void init()override
 	{
-		load(L"test.data");
-
-		/*
-		m_timers.push_back(Timer(Point(0, 0), Size(320, 270), L"PC3"));
-		m_timers.push_back(Timer(Point(320, 0), Size(320, 270), L"PC4"));
-		m_timers.push_back(Timer(Point(0, 270), Size(320, 270), L"PC1"));
-		m_timers.push_back(Timer(Point(320, 270), Size(320, 270), L"PC2"));
-		m_timers.push_back(Timer(Point(640, 270), Size(320, 270), L"VR"));
-		*/
+		load(L"config.data");
+		
+		//m_timers.push_back(std::make_shared<Timer>(Timer(Point(0, 0), Size(320, 270), L"PC3")));
+		//m_timers.push_back(std::make_shared<Timer>(Timer(Point(320, 0), Size(320, 270), L"PC4")));
+		//m_timers.push_back(std::make_shared<Timer>(Timer(Point(0, 270), Size(320, 270), L"PC1")));
+		//m_timers.push_back(std::make_shared<Timer>(Timer(Point(320, 270), Size(320, 270), L"PC2")));
+		//m_timers.push_back(std::make_shared<Timer>(Timer(Point(640, 270), Size(320, 270), L"VR")));
+		
 
 		m_clock = Clock(Point(640, 0), Size(320, 270), L"ŽžŒv");
 
@@ -101,7 +132,7 @@ public:
 	{
 		for (auto&& t : m_timers)
 		{
-			t.update();
+			t->update();
 		}
 
 		updateIdx();
@@ -113,12 +144,12 @@ public:
 
 		if (Input::KeyEnter.clicked || Input::KeySpace.clicked)
 		{
-			m_timers[m_timerIdx].callStartBt();
+			m_timers[m_timerIdx]->callStartBt();
 		}
 
 		else if (Input::KeyBackspace.clicked || Input::KeyShift.clicked)
 		{
-			m_timers[m_timerIdx].callResetBt();
+			m_timers[m_timerIdx]->callResetBt();
 		}
 
 
@@ -127,7 +158,7 @@ public:
 	{
 		for (const auto& t : m_timers)
 		{
-			t.draw();
+			t->draw();
 		}
 
 		m_clock.draw();
@@ -137,6 +168,6 @@ public:
 			return;
 		}
 
-		m_timers[m_timerIdx].getColider().drawFrame(3, 0, Palette::Yellow);
+		m_timers[m_timerIdx]->getColider().drawFrame(3, 0, Palette::Yellow);
 	}
 };
